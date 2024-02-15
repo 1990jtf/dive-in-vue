@@ -1,0 +1,54 @@
+<div id="app"></div>
+
+<script>
+  // render function
+  function h(tag, props, children) {
+    return {
+      tag,
+      props,
+      children,
+    }
+  }
+
+  // mount function
+  function mount(vnode, container) {
+    // console.log(vnode);
+    // 生成真实dom
+    const el = document.createElement(vnode.tag);
+    // props
+    if (vnode.props) {
+      // 把 props 放在元素上，作为DOm property 或 attribute
+      // 假设只有一种情况，都是attribute情况
+      for (const key in vnode.props) {
+        const value = vnode.props[key];
+        el.setAttribute(key, value);
+      }
+    }
+
+    // children
+    if (vnode.children) {
+      if (typeof vnode.children === "string") {
+        el.textContent = vnode.children;
+      } else {
+        vnode.children.forEach(child => {
+          // 递归
+          mount(child, el);
+        });
+      }
+    }
+
+    // 然后把el插入到container
+    container.appendChild(el);
+  }
+
+  // 我们要假设tag,props,children调用顺序不能错，也就是即使没有，必须在这里显示地传递null
+  const vdom = h('div', { class: 'red' }, [h('span', null, 'hello')]);
+
+  // 挂载
+  mount(vdom, document.getElementById('app'));
+</script>
+<style>
+  .red {
+    color: red;
+  }
+</style>
